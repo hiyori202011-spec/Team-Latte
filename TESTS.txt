@@ -1,0 +1,19 @@
+Comprobaciones estáticas del paquete (no equivalen a pruebas de integración con Supabase):
+[OK] HTML has search and sort controls
+[OK] HTML has admin form and list
+[OK] JS has immediate filtering
+[OK] JS uses atomic points RPC
+[OK] JS checks admin role
+[OK] SQL enforces nonnegative points
+[OK] SQL enables RLS
+[OK] Initial official list contains 33 names
+[OK] Realtime subscription included
+
+No se han ejecutado pruebas reales de login, base de datos ni sincronización porque aún no existe un proyecto Supabase configurado.
+
+Comprobación adicional de puntuaciones confirmadas:
+[OK] Hange Zoë: 21 puntos
+[OK] Mitsuri Kanroji: 29 puntos
+[OK] Mitsuba Sousuke: 17 puntos
+[OK] Arima Kana: 9 puntos
+[OK] Suguru Geto: 3 puntos

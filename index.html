@@ -1,0 +1,200 @@
+
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#100b16">
+  <meta name="description" content="Registro de personajes ocupados del clan.">
+
+  <title> Personajes ocupados · Registro del clan</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="config.js"></script>
+  <script defer src="app.js"></script>
+</head>
+
+<body>
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+
+  <header class="hero">
+    <p class="eyebrow"> ARCHIVO PRIVADO DEL CLAN </p>
+    <h1>PERSONAJES <span>OCUPADOS</span></h1>
+    <p class="subtitle"> REGISTRO DEL CLAN </p>
+    <div class="ornament"><span></span>  <span></span></div>
+  </header>
+
+  <main class="shell">
+    <section class="toolbar panel" aria-label="Buscar y ordenar personajes">
+      <label class="search-wrap">
+        <span aria-hidden="true"></span>
+        <input id="search" type="search" placeholder="Buscar personaje, serie, edad o miembro…" autocomplete="off">
+      </label>
+
+      <select id="sort" aria-label="Ordenar personajes">
+        <option value="points-desc">Más puntos</option>
+        <option value="points-asc">Menos puntos</option>
+        <option value="name-asc">Nombre: A–Z</option>
+        <option value="name-desc">Nombre: Z–A</option>
+      </select>
+
+      <button id="admin-entry" class="button button-outline" type="button">
+         Administración
+      </button>
+    </section>
+
+    <section class="stats" aria-label="Estadísticas del clan">
+      <article class="stat panel">
+        <span class="stat-mark"></span>
+        <p>Personajes registrados</p>
+        <strong id="total-count">—</strong>
+      </article>
+
+      <article class="stat panel">
+        <span class="stat-mark"></span>
+        <p>Puntos acumulados</p>
+        <strong id="total-points">—</strong>
+      </article>
+
+      <article class="stat panel">
+        <span class="stat-mark"></span>
+        <p>Líder actual</p>
+        <strong id="leader">—</strong>
+      </article>
+    </section>
+
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow"> LISTA DEL CLAN </p>
+        <h2>Registro de personajes</h2>
+      </div>
+      <span id="connection-status" class="status">Preparando página…</span>
+    </div>
+
+    <div id="notice" class="notice" role="status" aria-live="polite" hidden></div>
+
+    <div id="grid" class="character-grid"></div>
+
+    <p id="empty" class="empty panel" hidden>
+      No encontramos coincidencias. Prueba con otro nombre. 
+    </p>
+
+    <p class="footnote">
+       Los datos pendientes se conservan sin asignaciones inventadas. 
+    </p>
+  </main>
+
+  <dialog id="auth-dialog" class="dialog panel">
+    <form id="auth-form" class="dialog-content">
+      <button type="button" class="close" data-close="auth-dialog" aria-label="Cerrar">×</button>
+
+      <p class="eyebrow"> ACCESO RESTRINGIDO </p>
+      <h2>Administración</h2>
+
+      <p class="muted">
+        Inicia sesión con una cuenta autorizada por el administrador del proyecto.
+      </p>
+
+      <label>
+        Correo electrónico
+        <input id="email" type="email" required autocomplete="username" placeholder="Tu correo">
+      </label>
+
+      <label>
+        Contraseña
+        <input id="password" type="password" required autocomplete="current-password" placeholder="Tu contraseña">
+      </label>
+
+      <button class="button button-primary full" type="submit">
+        Iniciar sesión
+      </button>
+
+      <button id="forgot-password" type="button" class="text-button">
+        ¿Olvidaste tu contraseña?
+      </button>
+
+      <p id="auth-message" class="form-message" aria-live="polite"></p>
+    </form>
+  </dialog>
+
+  <section id="admin-panel" class="admin-panel" hidden>
+    <div class="admin-header panel">
+      <div>
+        <p class="eyebrow"> ZONA DE ADMINISTRACIÓN </p>
+        <h2>Gestionar el registro</h2>
+        <p class="muted">Los cambios se guardan en la base de datos compartida.</p>
+      </div>
+
+      <button id="sign-out" class="button button-outline" type="button">
+        Cerrar sesión
+      </button>
+    </div>
+
+    <div class="admin-layout">
+      <form id="character-form" class="panel editor">
+        <h3 id="form-title"> Añadir personaje</h3>
+        <input id="edit-id" type="hidden">
+
+        <label>
+          Nombre del personaje *
+          <input id="field-name" required maxlength="100" placeholder="Nombre">
+        </label>
+
+        <label>
+          Anime, manga, juego o serie
+          <input id="field-series" maxlength="150" placeholder="Por completar">
+        </label>
+
+        <label>
+          Edad
+          <input id="field-age" maxlength="50" placeholder="Por completar">
+        </label>
+
+        <label>
+          Miembro asignado
+          <input id="field-member" maxlength="100" placeholder="Sin asignar">
+        </label>
+
+        <label>
+          Puntos iniciales
+          <input id="field-points" type="number" min="0" max="100000000" step="1" value="0" required>
+        </label>
+
+        <div class="form-actions">
+          <button type="submit" class="button button-primary">
+            Guardar personaje
+          </button>
+
+          <button id="cancel-edit" type="button" class="button button-outline" hidden>
+            Cancelar edición
+          </button>
+        </div>
+
+        <p class="muted tiny">
+          Puedes editar los datos de los personajes cuando sea necesario.
+        </p>
+      </form>
+
+      <div class="panel admin-list">
+        <div class="list-heading">
+          <h3> Personajes registrados</h3>
+          <span id="admin-count">—</span>
+        </div>
+
+        <div id="admin-rows"></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+     <span>Un registro hecho con cariño</span> 
+  </footer>
+</body>
+</html>
